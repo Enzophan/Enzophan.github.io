@@ -80,10 +80,13 @@ body {
     background-color: #000;
 }
 
-.navbar-brand {
+/* .navbar-brand {
     color: #fff;
     font-weight: bold;
-    /* height: 50px; */
+} */
+
+.navbar-brand img{
+    height: 50px;
 }
 
 .nav-bar .fa-bars{
