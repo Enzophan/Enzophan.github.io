@@ -1,8 +1,9 @@
-const staticCacheName = 'site-static';
+const staticCacheName = 'site-static-v2';
+const dynamicCacheName = 'site-dynamic-v1';
 const assets = [
     '/',
     '/index.html',
-    '/blogs.html',
+    '/pages/blogs.html',
     '/js/app.js',
     '/css/smooth-scroll.js',
     '/css/index.css',
@@ -27,9 +28,27 @@ self.addEventListener('install', evt => {
 // Activate service worker
 self.addEventListener('activate', evt => {
     // console.log("Service worker has been activated")
+    evt.waitUntil(
+        caches.keys().then(keys => {
+            // console.log(keys)
+            return Promise.all(keys.filter(key => key !== staticCacheName).map(key => caches.delete(key)))
+        })
+    )
 })
 
 // Fetch events
 self.addEventListener('fetch', evt => {
     // console.log("fetch event", evt)
+    evt.respondWith(
+        caches.match(evt.request).then(cacheRes => {
+            return cacheRes || fetch(evt.request).then(fetchRes => {
+                return caches.open(dynamicCacheName)
+                    .then(cache => {
+                        cache.put(evt.request.url, fetchRes.clone());
+                        return fetchRes;
+                    })
+            })
+        })
+
+    )
 })
