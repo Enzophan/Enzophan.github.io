@@ -4,6 +4,7 @@ const assets = [
     '/',
     '/index.html',
     '/pages/blogs.html',
+    '/pages/fallback.html',
     '/js/app.js',
     '/css/smooth-scroll.js',
     '/css/index.css',
@@ -11,7 +12,18 @@ const assets = [
     '/img/user1.png',
     '/img/nhan-logo.png',
     'https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css'
-]
+];
+
+// Limiting cache size
+const limitCacheSize = (name, size) => {
+    caches.open(name).then(cache => {
+        cache.keys().then(keys => {
+            if (keys.length > size) {
+                cache.delete(keys[0]).then(limitCacheSize(name, size));
+            }
+        })
+    })
+}
 
 // Install service worker
 self.addEventListener('install', evt => {
@@ -31,7 +43,9 @@ self.addEventListener('activate', evt => {
     evt.waitUntil(
         caches.keys().then(keys => {
             // console.log(keys)
-            return Promise.all(keys.filter(key => key !== staticCacheName).map(key => caches.delete(key)))
+            return Promise.all(keys
+                .filter(key => key !== staticCacheName && key !== dynamicCacheName)
+                .map(key => caches.delete(key)))
         })
     )
 })
@@ -45,9 +59,14 @@ self.addEventListener('fetch', evt => {
                 return caches.open(dynamicCacheName)
                     .then(cache => {
                         cache.put(evt.request.url, fetchRes.clone());
+                        limitCacheSize(dynamicCacheName, 15);
                         return fetchRes;
                     })
             })
+        }).catch(() => {
+            if (evt.request.url.indexOf('.html') > -1) {
+                return caches.match('/pages/fallback.html')
+            }
         })
 
     )
