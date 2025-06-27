@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Guide to Automation Test Standards</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Warm Neutrals with a Tech Blue Accent -->
+    <!-- Application Structure Plan: The application is designed around a three-pillar structure: 'Why Automate?', 'Building the Standard', and 'Making It Work'. This non-linear, thematic approach guides the user from the strategic rationale to practical implementation and best practices. A top-level tabbed navigation controls these main pillars. The 'Building the Standard' section has its own sub-navigation, also using tabs, to break down the core components. This layered, interactive structure was chosen to make the dense, text-heavy report digestible, preventing user overwhelm and encouraging exploration by isolating complex topics into manageable, interactive sections. -->
+    <!-- Visualization & Content Choices: 
+        - Report Info: Core Principles/Goals -> Goal: Inform/Proportions -> Viz: Doughnut Chart -> Interaction: Hover to see details -> Justification: Visually represents the conceptual weight and relationship of key goals, more engaging than a list. -> Library: Chart.js.
+        - Report Info: Tool Comparison Table -> Goal: Compare -> Viz: Radar Chart -> Interaction: Select a tool from a dropdown to dynamically update the chart -> Justification: Allows for a multi-axial comparison of tools in a single, easy-to-grasp visualization, superior to a static table for understanding trade-offs. -> Library: Chart.js.
+        - Report Info: CI/CD Process -> Goal: Organize/Change -> Viz: HTML/CSS Flowchart -> Interaction: Static visual with clear labeling -> Justification: Simplifies the complex process flow described in the text into a clear, sequential diagram. -> Library/Method: Tailwind CSS.
+        - Report Info: Best Practices, Benefits/Challenges -> Goal: Inform/Compare -> Viz: Accordions & Side-by-Side Cards -> Interaction: Click to expand, visual grouping -> Justification: Organizes lists into interactive, space-saving elements and allows for direct visual comparison of opposing concepts. -> Library/Method: Tailwind CSS & Vanilla JS.
+        - Report Info: Test Case Prioritization -> Goal: Organize -> Viz: Interactive HTML Table -> Interaction: Hover highlights rows -> Justification: Retains the familiar table format but adds interactivity for better user engagement. -> Library/Method: Tailwind CSS. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px;
+            max-height: 400px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 350px;
+            }
+        }
+        .tab-active {
+            border-color: #3b82f6;
+            color: #3b82f6;
+            font-weight: 600;
+        }
+        .sub-tab-active {
+            background-color: #3b82f6;
+            color: white;
+        }
+    </style>
+</head>
+<body class="bg-[#f8f7f4] text-[#333333]">
+
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
+        <header class="text-center mb-10">
+            <h1 class="text-4xl md:text-5xl font-bold text-[#1f2937] tracking-tight">Interactive Guide to Automation Test Standards</h1>
+            <p class="mt-4 text-lg text-gray-600 max-w-3xl mx-auto">An interactive experience designed to help you understand, build, and implement a robust automation testing framework.</p>
+        </header>
+
+        <nav class="mb-8 border-b border-gray-300">
+            <ul class="flex flex-wrap -mb-px justify-center text-lg font-medium text-center" id="main-tabs">
+                <li class="mr-2">
+                    <button class="main-tab inline-block p-4 border-b-2 rounded-t-lg" data-target="why-automate">💡 Why Automate?</button>
+                </li>
+                <li class="mr-2">
+                    <button class="main-tab inline-block p-4 border-b-2 rounded-t-lg" data-target="building-standard">🏗️ Building the Standard</button>
+                </li>
+                <li>
+                    <button class="main-tab inline-block p-4 border-b-2 rounded-t-lg" data-target="making-it-work">🚀 Making It Work</button>
+                </li>
+            </ul>
+        </nav>
+
+        <main id="main-content">
+            <!-- Section 1: Why Automate? -->
+            <section id="why-automate" class="main-content-panel hidden">
+                <div class="text-center mb-12">
+                     <h2 class="text-3xl font-bold mb-2">The Rationale for Automation</h2>
+                     <p class="text-gray-600 max-w-3xl mx-auto">Before diving into the "how," it's crucial to understand the "why." This section explores the fundamental principles, benefits, and challenges of establishing an automation test standard, providing the strategic context for your initiative.</p>
+                </div>
+
+                <div class="grid md:grid-cols-2 gap-8 items-center">
+                    <div>
+                        <h3 class="text-2xl font-semibold mb-4 text-center">Core Principles & Goals</h3>
+                        <div class="chart-container">
+                            <canvas id="principlesChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="space-y-4">
+                        <div class="p-4 bg-white rounded-lg shadow">
+                            <h4 class="font-bold text-lg text-green-600">Key Benefits</h4>
+                            <ul class="list-disc list-inside mt-2 text-gray-700">
+                                <li>Improved efficiency and speed</li>
+                                <li>Enhanced accuracy and reliability</li>
+                                <li>Increased test coverage</li>
+                                <li>Long-term cost-effectiveness</li>
+                                <li>Faster time-to-market</li>
+                                <li>Improved software quality</li>
+                            </ul>
+                        </div>
+                         <div class="p-4 bg-white rounded-lg shadow">
+                            <h4 class="font-bold text-lg text-red-600">Common Challenges</h4>
+                            <ul class="list-disc list-inside mt-2 text-gray-700">
+                                <li>High initial investment</li>
+                                <li>Selecting the right tools</li>
+                                <li>Lack of in-house expertise</li>
+                                <li>Test script maintenance overhead</li>
+                                <li>Handling dynamic UI elements</li>
+                                <li>Setting realistic expectations</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section 2: Building the Standard -->
+            <section id="building-standard" class="main-content-panel hidden">
+                 <div class="text-center mb-8">
+                     <h2 class="text-3xl font-bold mb-2">The Components of a Strong Standard</h2>
+                     <p class="text-gray-600 max-w-4xl mx-auto">A comprehensive automation standard is built on several key pillars. Each component provides the necessary guidelines and structure for a successful and scalable automation practice. Explore each component below to understand its role and importance.</p>
+                </div>
+                
+                <div class="flex flex-wrap justify-center gap-2 mb-8" id="sub-tabs">
+                    <button class="sub-tab px-4 py-2 text-sm font-medium text-gray-700 bg-white rounded-md shadow-sm" data-target="sub-strategy">Strategy</button>
+                    <button class="sub-tab px-4 py-2 text-sm font-medium text-gray-700 bg-white rounded-md shadow-sm" data-target="sub-tooling">Tooling</button>
+                    <button class="sub-tab px-4 py-2 text-sm font-medium text-gray-700 bg-white rounded-md shadow-sm" data-target="sub-scripting">Scripting</button>
+                    <button class="sub-tab px-4 py-2 text-sm font-medium text-gray-700 bg-white rounded-md shadow-sm" data-target="sub-data">Data</button>
+                    <button class="sub-tab px-4 py-2 text-sm font-medium text-gray-700 bg-white rounded-md shadow-sm" data-target="sub-environment">Environment</button>
+                    <button class="sub-tab px-4 py-2 text-sm font-medium text-gray-700 bg-white rounded-md shadow-sm" data-target="sub-execution">Execution & CI/CD</button>
+                    <button class="sub-tab px-4 py-2 text-sm font-medium text-gray-700 bg-white rounded-md shadow-sm" data-target="sub-maintenance">Maintenance</button>
+                </div>
+
+                <div id="sub-content" class="bg-white p-6 rounded-lg shadow-inner min-h-[450px]">
+                    <div id="sub-strategy" class="sub-content-panel hidden">
+                        <h3 class="text-2xl font-semibold mb-4">Automation Strategy & Prioritization</h3>
+                        <p class="mb-6 text-gray-600">A clear strategy is the foundation. It defines what to automate and why. Prioritizing test cases based on factors like business criticality and execution frequency ensures you focus on what delivers the most value first. The matrix below provides an example of how to rank potential test cases for automation.</p>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left border-collapse">
+                                <thead>
+                                    <tr class="bg-gray-100">
+                                        <th class="p-3 font-semibold">Test Case</th>
+                                        <th class="p-3 font-semibold">Frequency</th>
+                                        <th class="p-3 font-semibold">Criticality</th>
+                                        <th class="p-3 font-semibold">Manual Time</th>
+                                        <th class="p-3 font-semibold bg-blue-100 text-blue-800">Priority</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr class="hover:bg-gray-50">
+                                        <td class="p-3 border-b">Login with valid credentials</td>
+                                        <td class="p-3 border-b">Daily</td>
+                                        <td class="p-3 border-b text-red-600 font-medium">High</td>
+                                        <td class="p-3 border-b">5 min</td>
+                                        <td class="p-3 border-b font-bold text-lg text-center bg-blue-50">1</td>
+                                    </tr>
+                                    <tr class="hover:bg-gray-50">
+                                        <td class="p-3 border-b">Add product to cart</td>
+                                        <td class="p-3 border-b">Weekly</td>
+                                        <td class="p-3 border-b text-red-600 font-medium">High</td>
+                                        <td class="p-3 border-b">10 min</td>
+                                        <td class="p-3 border-b font-bold text-lg text-center bg-blue-50">2</td>
+                                    </tr>
+                                     <tr class="hover:bg-gray-50">
+                                        <td class="p-3 border-b">Generate monthly sales report</td>
+                                        <td class="p-3 border-b">Monthly</td>
+                                        <td class="p-3 border-b text-yellow-600 font-medium">Medium</td>
+                                        <td class="p-3 border-b">30 min</td>
+                                        <td class="p-3 border-b font-bold text-lg text-center bg-blue-50">3</td>
+                                    </tr>
+                                    <tr class="hover:bg-gray-50">
+                                        <td class="p-3 border-b">Validate homepage UI alignment</td>
+                                        <td class="p-3 border-b">Per Release</td>
+                                        <td class="p-3 border-b text-green-600 font-medium">Low</td>
+                                        <td class="p-3 border-b">15 min</td>
+                                        <td class="p-3 border-b font-bold text-lg text-center bg-blue-50">4</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div id="sub-tooling" class="sub-content-panel hidden">
+                        <h3 class="text-2xl font-semibold mb-4">Framework & Tooling</h3>
+                        <p class="mb-6 text-gray-600">Choosing the right tools and framework is a critical decision that impacts scalability and maintenance. Compare tools based on factors like language support, cost, ease of use, and community support. Select a tool from the dropdown to see its profile on the radar chart.</p>
+                        <div class="grid md:grid-cols-2 gap-8 items-center">
+                            <div>
+                                <label for="tool-selector" class="block text-sm font-medium text-gray-700 mb-2">Select a Tool to Compare:</label>
+                                <select id="tool-selector" class="w-full p-2 border border-gray-300 rounded-md shadow-sm">
+                                    <option value="Selenium" selected>Selenium</option>
+                                    <option value="Cypress">Cypress</option>
+                                    <option value="Playwright">Playwright</option>
+                                    <option value="Appium">Appium</option>
+                                </select>
+                                <p class="mt-4 text-sm text-gray-500">The chart visually compares tools on a scale of 1 (low) to 5 (high) across key attributes.</p>
+                            </div>
+                             <div class="chart-container">
+                                <canvas id="toolingChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="sub-scripting" class="sub-content-panel hidden">
+                        <h3 class="text-2xl font-semibold mb-4">Test Scripting Standards</h3>
+                        <p class="mb-6 text-gray-600">Consistency in your code is key to maintainability. Standards should cover everything from how you name your files to how you handle errors. Click on an element type below to see a recommended naming convention and an example.</p>
+                        <div id="naming-convention-accordion" class="space-y-2">
+                        </div>
+                    </div>
+                    <div id="sub-data" class="sub-content-panel hidden">
+                         <h3 class="text-2xl font-semibold mb-4">Test Data Management</h3>
+                         <p class="mb-4 text-gray-600">Reliable tests require reliable data. Your standard must define how test data is created, stored, secured, and refreshed. Poor data management is a common cause of flaky and unreliable automated tests.</p>
+                         <ul class="space-y-3">
+                            <li class="flex items-start">
+                                <span class="text-blue-500 mr-3 mt-1">✓</span>
+                                <div><strong class="font-semibold">Strategy:</strong> Define clear processes for generating or sourcing test data (e.g., synthetic generation, data masking from production).</div>
+                            </li>
+                            <li class="flex items-start">
+                                <span class="text-blue-500 mr-3 mt-1">✓</span>
+                                <div><strong class="font-semibold">Separation:</strong> Use data-driven techniques. Keep data in external files (CSV, JSON) separate from test logic for easier maintenance and scalability.</div>
+                            </li>
+                             <li class="flex items-start">
+                                <span class="text-blue-500 mr-3 mt-1">✓</span>
+                                <div><strong class="font-semibold">Security:</strong> Anonymize or mask any sensitive (PII) data used in testing environments to comply with privacy regulations.</div>
+                            </li>
+                             <li class="flex items-start">
+                                <span class="text-blue-500 mr-3 mt-1">✓</span>
+                                <div><strong class="font-semibold">Maintenance:</strong> Establish a process for refreshing and cleaning test data to prevent it from becoming stale and causing false negatives.</div>
+                            </li>
+                         </ul>
+                    </div>
+                    <div id="sub-environment" class="sub-content-panel hidden">
+                         <h3 class="text-2xl font-semibold mb-4">Test Environment & Configuration</h3>
+                         <p class="mb-4 text-gray-600">Your test environment should mirror production as closely as possible to ensure test results are valid. The standard must specify all hardware, software, and network requirements.</p>
+                          <ul class="space-y-3">
+                            <li class="flex items-start">
+                                <span class="text-blue-500 mr-3 mt-1">✓</span>
+                                <div><strong class="font-semibold">Consistency:</strong> Ensure the test environment (OS, browser versions, dependencies) matches the production environment to prevent "works on my machine" issues.</div>
+                            </li>
+                            <li class="flex items-start">
+                                <span class="text-blue-500 mr-3 mt-1">✓</span>
+                                <div><strong class="font-semibold">Isolation:</strong> The test environment should be isolated to prevent interference from other activities and ensure test results are not skewed.</div>
+                            </li>
+                             <li class="flex items-start">
+                                <span class="text-blue-500 mr-3 mt-1">✓</span>
+                                <div><strong class="font-semibold">Provisioning:</strong> Use Infrastructure-as-Code (e.g., Docker, Terraform) to automate the setup and teardown of test environments for consistency and speed.</div>
+                            </li>
+                             <li class="flex items-start">
+                                <span class="text-blue-500 mr-3 mt-1">✓</span>
+                                <div><strong class="font-semibold">Maintenance:</strong> Define a schedule for updating and patching the test environment to keep it in sync with production.</div>
+                            </li>
+                         </ul>
+                    </div>
+                    <div id="sub-execution" class="sub-content-panel hidden">
+                        <h3 class="text-2xl font-semibold mb-4">Test Execution & CI/CD Integration</h3>
+                        <p class="mb-6 text-gray-600">Automation provides the most value when it's integrated directly into your development workflow. The goal is to get fast, automated feedback on every code change. This flowchart illustrates a typical CI/CD pipeline with integrated automated testing.</p>
+                        <div class="flex flex-col md:flex-row justify-center items-center space-y-4 md:space-y-0 md:space-x-4 text-center">
+                            <div class="p-4 bg-gray-100 rounded-lg shadow-sm">
+                                <p class="font-semibold">1. Code Commit</p>
+                                <p class="text-sm">Developer pushes code</p>
+                            </div>
+                            <p class="text-2xl font-light text-gray-400">→</p>
+                            <div class="p-4 bg-blue-100 rounded-lg shadow-sm">
+                                <p class="font-semibold">2. CI Server Builds</p>
+                                <p class="text-sm">Jenkins, GitLab CI, etc.</p>
+                            </div>
+                            <p class="text-2xl font-light text-gray-400">→</p>
+                            <div class="p-4 bg-blue-100 rounded-lg shadow-sm">
+                                <p class="font-semibold">3. Run Automated Tests</p>
+                                <p class="text-sm">(Unit, Integration, E2E)</p>
+                            </div>
+                            <p class="text-2xl font-light text-gray-400">→</p>
+                             <div class="p-4 bg-green-100 rounded-lg shadow-sm">
+                                <p class="font-semibold">4. Deploy</p>
+                                <p class="text-sm">If tests pass</p>
+                            </div>
+                        </div>
+                         <p class="mt-4 text-center text-red-600">If tests fail, the pipeline stops and notifies the team.</p>
+                    </div>
+                    <div id="sub-maintenance" class="sub-content-panel hidden">
+                         <h3 class="text-2xl font-semibold mb-4">Maintenance of Automated Tests</h3>
+                         <p class="mb-4 text-gray-600">Test scripts are code and require ongoing maintenance to remain valuable. An unmaintained test suite quickly becomes a liability. The standard must include a plan for review and refactoring.</p>
+                          <ul class="space-y-3">
+                            <li class="flex items-start">
+                                <span class="text-blue-500 mr-3 mt-1">✓</span>
+                                <div><strong class="font-semibold">Regular Reviews:</strong> Schedule periodic reviews of the test suite to identify and remove obsolete or redundant tests.</div>
+                            </li>
+                            <li class="flex items-start">
+                                <span class="text-blue-500 mr-3 mt-1">✓</span>
+                                <div><strong class="font-semibold">Refactoring:</strong> Treat test code like application code. Refactor brittle tests and improve locators to make them more resilient to UI changes.</div>
+                            </li>
+                             <li class="flex items-start">
+                                <span class="text-blue-500 mr-3 mt-1">✓</span>
+                                <div><strong class="font-semibold">Failure Analysis:</strong> Establish a clear process for analyzing test failures to distinguish between actual application bugs and test script issues.</div>
+                            </li>
+                             <li class="flex items-start">
+                                <span class="text-blue-500 mr-3 mt-1">✓</span>
+                                <div><strong class="font-semibold">Version Control:</strong> Store all test assets (scripts, data files, configs) in a version control system like Git to track changes and facilitate collaboration.</div>
+                            </li>
+                         </ul>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Section 3: Making It Work -->
+            <section id="making-it-work" class="main-content-panel hidden">
+                 <div class="text-center mb-12">
+                     <h2 class="text-3xl font-bold mb-2">From Standard to Success</h2>
+                     <p class="text-gray-600 max-w-3xl mx-auto">Having a standard is the first step. Successfully implementing and maintaining it requires adopting best practices and a mindset of continuous improvement. This section provides actionable advice to ensure the long-term value of your automation efforts.</p>
+                </div>
+                <h3 class="text-2xl font-semibold mb-6 text-center">Best Practices for Implementation</h3>
+                <div class="max-w-4xl mx-auto space-y-4" id="best-practices-accordion">
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const mainTabs = document.querySelectorAll('.main-tab');
+            const mainContentPanels = document.querySelectorAll('.main-content-panel');
+            const subTabs = document.querySelectorAll('.sub-tab');
+            const subContentPanels = document.querySelectorAll('.sub-content-panel');
+
+            const toolSelector = document.getElementById('tool-selector');
+            let principlesChart, toolingChart;
+
+            const toolingData = {
+                Selenium: [4, 3, 5, 5, 2],
+                Cypress: [3, 5, 3, 4, 4],
+                Playwright: [5, 4, 4, 4, 3],
+                Appium: [4, 3, 5, 5, 2],
+            };
+            
+            const namingConventions = [
+                {
+                    type: "Test Case",
+                    pattern: "TC_[Module]_[Outcome]",
+                    example: "TC_LOGIN_ValidCredentials_Success",
+                    description: "Clearly identifies the module, scenario, and expected outcome of the test case."
+                },
+                {
+                    type: "Test Script",
+                    pattern: "TS_[Module]_[Scenario]",
+                    example: "TS_LOGIN_ValidCredentials",
+                    description: "Identifies the script associated with a specific module and scenario."
+                },
+                {
+                    type: "Function",
+                    pattern: "[Action][Object]",
+                    example: "clickLoginButton()",
+                    description: "Describes the action performed on a specific object."
+                },
+                {
+                    type: "Variable",
+                    pattern: "[dataType] [purpose]",
+                    example: "String username",
+                    description: "Indicates the data type and purpose of the variable."
+                },
+                {
+                    type: "Locator",
+                    pattern: "[Page]_[Element]_[Type]",
+                    example: "loginPage_usernameField_ID",
+                    description: "Specifies the UI element and the type of identifier used (e.g., ID, XPath, CSS)."
+                }
+            ];
+
+            const bestPractices = [
+                { title: "Start with a Clear Strategy", content: "Define your goals, scope, and approach before writing a single line of code. This ensures your efforts are aligned with business objectives." },
+                { title: "Prioritize High-Value Tests", content: "Focus on automating tests that are repetitive, business-critical, or prone to human error. This delivers the fastest return on investment." },
+                { title: "Choose the Right Tools", content: "Select frameworks and tools that fit your team's skills, your project's technology stack, and your budget. There is no one-size-fits-all solution." },
+                { title: "Design for Reusability", content: "Create modular, reusable functions and components. This reduces code duplication and makes your test suite much easier to maintain." },
+                { title: "Use Data-Driven Testing", content: "Separate your test logic from your test data. This allows you to easily run the same test with hundreds of different data inputs, dramatically increasing coverage." },
+                { title: "Integrate into CI/CD", content: "Make automated testing an integral part of your build pipeline. This provides fast feedback to developers and prevents bad code from progressing." },
+                { title: "Dedicate Time for Maintenance", content: "An automated test suite is a living project. Regularly review, refactor, and update your tests to keep them reliable and relevant." },
+                { title: "Foster Collaboration", content: "Automation is a team sport. Ensure close collaboration between developers, testers, and operations to build a culture of quality." }
+            ];
+
+            function initMainTabs() {
+                mainTabs.forEach(tab => {
+                    tab.addEventListener('click', () => {
+                        const target = tab.dataset.target;
+
+                        mainTabs.forEach(t => t.classList.remove('tab-active', 'border-blue-500', 'text-blue-600'));
+                        mainTabs.forEach(t => t.classList.add('border-transparent', 'hover:text-gray-600', 'hover:border-gray-300'));
+                        
+                        tab.classList.add('tab-active', 'border-blue-500', 'text-blue-600');
+                        tab.classList.remove('border-transparent', 'hover:text-gray-600', 'hover:border-gray-300');
+
+                        mainContentPanels.forEach(panel => {
+                            if (panel.id === target) {
+                                panel.classList.remove('hidden');
+                                if(panel.id === 'why-automate') createPrinciplesChart();
+                                if(panel.id === 'building-standard') {
+                                    createToolingChart();
+                                    // Activate the first sub-tab by default
+                                    if(document.querySelector('.sub-tab.sub-tab-active') == null) {
+                                       subTabs[0].click();
+                                    }
+                                }
+                                if(panel.id === 'making-it-work') renderBestPractices();
+                            } else {
+                                panel.classList.add('hidden');
+                            }
+                        });
+                    });
+                });
+                mainTabs[0].click();
+            }
+
+            function initSubTabs() {
+                subTabs.forEach(tab => {
+                    tab.addEventListener('click', () => {
+                        const target = tab.dataset.target;
+                        subTabs.forEach(t => t.classList.remove('sub-tab-active'));
+                        tab.classList.add('sub-tab-active');
+
+                        subContentPanels.forEach(panel => {
+                            panel.classList.toggle('hidden', panel.id !== target);
+                        });
+                        if(target === 'sub-scripting') renderNamingConventions();
+                    });
+                });
+            }
+
+            function createPrinciplesChart() {
+                if (principlesChart) principlesChart.destroy();
+                const ctx = document.getElementById('principlesChart').getContext('2d');
+                principlesChart = new Chart(ctx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Improve Quality', 'Increase Efficiency', 'Reduce Cost', 'Enhance Coverage', 'Accelerate Feedback'],
+                        datasets: [{
+                            label: 'Core Principles',
+                            data: [30, 25, 15, 20, 10],
+                            backgroundColor: ['#3b82f6', '#10b981', '#f59e0b', '#8b5cf6', '#ef4444'],
+                            borderColor: '#f8f7f4',
+                            borderWidth: 4
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'bottom',
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        return `${context.label}: ${context.raw}%`;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+
+            function createToolingChart(tool = 'Selenium') {
+                if (toolingChart) toolingChart.destroy();
+                const ctx = document.getElementById('toolingChart').getContext('2d');
+                toolingChart = new Chart(ctx, {
+                    type: 'radar',
+                    data: {
+                        labels: ['Platform Support', 'Ease of Use', 'Integration', 'Community', 'Cost (Inverse)'],
+                        datasets: [{
+                            label: tool,
+                            data: toolingData[tool],
+                            fill: true,
+                            backgroundColor: 'rgba(59, 130, 246, 0.2)',
+                            borderColor: 'rgb(59, 130, 246)',
+                            pointBackgroundColor: 'rgb(59, 130, 246)',
+                            pointBorderColor: '#fff',
+                            pointHoverBackgroundColor: '#fff',
+                            pointHoverBorderColor: 'rgb(59, 130, 246)'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            r: {
+                                angleLines: {
+                                    color: 'rgba(0, 0, 0, 0.1)'
+                                },
+                                suggestedMin: 0,
+                                suggestedMax: 5,
+                                pointLabels: {
+                                    font: {
+                                        size: 11
+                                    }
+                                },
+                                ticks: {
+                                    stepSize: 1,
+                                    backdropColor: 'transparent'
+                                }
+                            }
+                        },
+                        plugins: {
+                            legend: {
+                                display: false
+                            }
+                        }
+                    }
+                });
+            }
+            
+            function renderNamingConventions() {
+                const container = document.getElementById('naming-convention-accordion');
+                if (container.childElementCount > 0) return;
+
+                namingConventions.forEach(item => {
+                    const div = document.createElement('div');
+                    div.className = "border border-gray-200 rounded-lg";
+                    div.innerHTML = `
+                        <button class="w-full flex justify-between items-center p-4 text-left font-medium text-gray-800 hover:bg-gray-50">
+                            <span>${item.type}</span>
+                            <span class="transform transition-transform duration-200">+</span>
+                        </button>
+                        <div class="hidden p-4 border-t border-gray-200 bg-gray-50">
+                            <p class="text-gray-600 mb-2">${item.description}</p>
+                            <div class="bg-gray-800 text-white p-3 rounded-md text-sm font-mono">
+                                <p><strong class="text-yellow-400">Pattern:</strong> ${item.pattern}</p>
+                                <p><strong class="text-green-400">Example:</strong> ${item.example}</p>
+                            </div>
+                        </div>
+                    `;
+                    container.appendChild(div);
+                });
+
+                container.addEventListener('click', e => {
+                    const button = e.target.closest('button');
+                    if(!button) return;
+                    
+                    const content = button.nextElementSibling;
+                    const icon = button.querySelector('span:last-child');
+                    
+                    content.classList.toggle('hidden');
+                    icon.textContent = content.classList.contains('hidden') ? '+' : '-';
+                });
+            }
+            
+            function renderBestPractices() {
+                 const container = document.getElementById('best-practices-accordion');
+                 if (container.childElementCount > 0) return;
+
+                bestPractices.forEach(item => {
+                    const div = document.createElement('div');
+                    div.className = "bg-white rounded-lg shadow-sm overflow-hidden";
+                    div.innerHTML = `
+                        <button class="w-full flex justify-between items-center p-5 text-left font-semibold text-lg text-blue-800 bg-blue-50 hover:bg-blue-100">
+                            <span>${item.title}</span>
+                            <span class="transform transition-transform duration-200 text-blue-600">+</span>
+                        </button>
+                        <div class="hidden p-5 border-t border-blue-200">
+                            <p class="text-gray-700">${item.content}</p>
+                        </div>
+                    `;
+                    container.appendChild(div);
+                });
+                
+                container.addEventListener('click', e => {
+                    const button = e.target.closest('button');
+                    if(!button) return;
+                    
+                    const content = button.nextElementSibling;
+                    const icon = button.querySelector('span:last-child');
+                    
+                    content.classList.toggle('hidden');
+                    icon.textContent = content.classList.contains('hidden') ? '+' : '-';
+                });
+            }
+
+            toolSelector.addEventListener('change', (e) => {
+                createToolingChart(e.target.value);
+            });
+
+            initMainTabs();
+            initSubTabs();
+        });
+    </script>
+</body>
+</html>
