@@ -31,6 +31,16 @@
             height: 300px;
             max-height: 400px;
         }
+        .automationChart-container {
+            position: relative;
+            width: 100%;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 450px;
+            max-height: 500px;
+            padding: 1rem;
+        }
         @media (min-width: 768px) {
             .chart-container {
                 height: 350px;
@@ -322,7 +332,7 @@
                     <div class="bg-white rounded-xl shadow-lg p-6">
                          <h2 class="text-2xl font-semibold mb-4 text-left">The Automation Matrix</h2>
                          <p class="text-gray-600 text-left mb-6">The chart below visualizes the ideal candidates for automation. A test's suitability is often determined by a balance of its value (e.g., repetition, business criticality) and the effort to automate it. The points represent different types of tests and where they fall on this matrix.</p>
-                        <div class="chart-container">
+                        <div class="automationChart-container">
                             <canvas id="automationChart"></canvas>
                         </div>
                     </div>
