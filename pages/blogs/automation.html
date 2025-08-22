@@ -63,8 +63,11 @@
                 <li class="mr-2">
                     <button class="main-tab inline-block p-4 border-b-2 rounded-t-lg" data-target="building-standard">🏗️ Building the Standard</button>
                 </li>
-                <li>
+                <li class="mr-2">
                     <button class="main-tab inline-block p-4 border-b-2 rounded-t-lg" data-target="making-it-work">🚀 Making It Work</button>
+                </li>
+                <li>
+                    <button class="main-tab inline-block p-4 border-b-2 rounded-t-lg" data-target="automation-suitability">✅ Automation Suitability</button>
                 </li>
             </ul>
         </nav>
@@ -306,6 +309,52 @@
                 <div class="max-w-4xl mx-auto space-y-4" id="best-practices-accordion">
                 </div>
             </section>
+
+
+             <!-- Section 4: Automation Suitability Axis Chart -->
+            <section id="automation-suitability" class="main-content-panel hidden">
+                <div class="container mx-auto max-w-5xl text-center">
+                    <header class="mb-10">
+                        <h1 class="text-3xl md:text-4xl font-bold text-[#1f2937] tracking-tight">Automation Suitability Axis Chart</h1>
+                        <p class="mt-4 text-lg text-gray-600">A conceptual guide to help you decide which tests are best suited for automation.</p>
+                    </header>
+                    
+                    <div class="bg-white rounded-xl shadow-lg p-6">
+                         <h2 class="text-2xl font-semibold mb-4 text-left">The Automation Matrix</h2>
+                         <p class="text-gray-600 text-left mb-6">The chart below visualizes the ideal candidates for automation. A test's suitability is often determined by a balance of its value (e.g., repetition, business criticality) and the effort to automate it. The points represent different types of tests and where they fall on this matrix.</p>
+                        <div class="chart-container">
+                            <canvas id="automationChart"></canvas>
+                        </div>
+                    </div>
+            
+                    <div class="mt-12 grid md:grid-cols-2 gap-8 text-left">
+                        <div class="bg-green-50 p-6 rounded-xl shadow-md">
+                            <h3 class="text-2xl font-semibold text-green-700 mb-4">✅ Should Be Automated</h3>
+                            <p class="text-gray-700 mb-4">These test types offer the highest return on investment for automation efforts.</p>
+                            <ul class="list-disc list-inside space-y-2 text-gray-700">
+                                <li><strong class="font-medium">High Repetition Rate:</strong> Tests that are run daily, per build, or in every regression suite.</li>
+                                <li><strong class="font-medium">Stable & Well-Defined Requirements:</strong> Features with a clear and unchanging set of steps and expected outcomes.</li>
+                                <li><strong class="font-medium">Deterministic Outcomes:</strong> Tests with a clear "pass" or "fail" result, with no room for subjective interpretation.</li>
+                                <li><strong class="font-medium">High Risk / Business-Critical Features:</strong> Functionalities where a failure would have a significant negative impact on the business.</li>
+                                <li><strong class="font-medium">Data-Driven Scenarios:</strong> The same test logic run with many different data inputs.</li>
+                                <li><strong class="font-medium">Time-Consuming to Execute Manually:</strong> Tests that take a long time to complete by hand.</li>
+                                <li><strong class="font-medium">Cross-Platform / Cross-Browser Testing:</strong> Running the same test on many different environments.</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="bg-red-50 p-6 rounded-xl shadow-md">
+                            <h3 class="text-2xl font-semibold text-red-700 mb-4">❌ Should Not Be Automated</h3>
+                            <p class="text-gray-700 mb-4">These test types are typically a poor fit for automation and are best handled manually.</p>
+                            <ul class="list-disc list-inside space-y-2 text-gray-700">
+                                <li><strong class="font-medium">Rarely Executed Tests:</strong> Tests that are only run once or twice in the entire project lifecycle.</li>
+                                <li><strong class="font-medium">Unstable or Frequently Changing Features:</strong> Features that are still in early development and have frequent UI or functionality changes.</li>
+                                <li><strong class="font-medium">Subjective Tests:</strong> Tests that require human judgment, such as usability, visual design, or user experience (UX) testing.</li>
+                                <li><strong class="font-medium">Low-Risk Functionality:</strong> Features where a bug would have minimal impact on the user or business.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </section>
         </main>
     </div>
 
@@ -317,7 +366,7 @@
             const subContentPanels = document.querySelectorAll('.sub-content-panel');
 
             const toolSelector = document.getElementById('tool-selector');
-            let principlesChart, toolingChart;
+            let principlesChart, toolingChart, automationChart;
 
             const toolingData = {
                 Selenium: [4, 3, 5, 5, 2],
@@ -393,6 +442,7 @@
                                     }
                                 }
                                 if(panel.id === 'making-it-work') renderBestPractices();
+                                if(panel.id === 'automation-suitability') createAutomationChart();
                             } else {
                                 panel.classList.add('hidden');
                             }
@@ -416,6 +466,101 @@
                     });
                 });
             }
+
+            function createAutomationChart() {
+                if (automationChart) automationChart.destroy();
+                const ctx = document.getElementById('automationChart').getContext('2d');
+                const data = {
+                                datasets: [
+                                    {
+                                        label: '✅ Should Be Automated',
+                                        data: [
+                                            { x: 9, y: 9, type: 'Regression Tests' },
+                                            { x: 8, y: 7, type: 'Performance/Load Tests' },
+                                            { x: 6, y: 8, type: 'Data-Driven Tests' },
+                                            { x: 7, y: 5, type: 'Smoke Tests' },
+                                            { x: 9, y: 4, type: 'Unit Tests' },
+                                            { x: 6, y: 6, type: 'Integration Tests' }
+                                        ],
+                                        backgroundColor: '#10b981',
+                                        borderColor: '#047857',
+                                        pointRadius: 8,
+                                        pointHoverRadius: 10
+                                    },
+                                    {
+                                        label: '❌ Should Not Be Automated',
+                                        data: [
+                                            { x: 1, y: 2, type: 'Exploratory Testing' },
+                                            { x: 3, y: 1, type: 'Usability Testing' },
+                                            { x: 2, y: 4, type: 'Ad-hoc Testing' },
+                                            { x: 2, y: 6, type: 'UI/UX Design Review' }
+                                        ],
+                                        backgroundColor: '#ef4444',
+                                        borderColor: '#b91c1c',
+                                        pointRadius: 8,
+                                        pointHoverRadius: 10
+                                    }
+                                ]
+                            };
+                new Chart(ctx, {
+                                type: 'scatter',
+                                data: data,
+                                options: {
+                                    responsive: true,
+                                    maintainAspectRatio: false,
+                                    scales: {
+                                        x: {
+                                            type: 'linear',
+                                            position: 'bottom',
+                                            min: 0,
+                                            max: 10,
+                                            grid: {
+                                                color: 'rgba(0, 0, 0, 0.1)'
+                                            },
+                                            title: {
+                                                display: true,
+                                                text: 'Value & Repetition (Higher is Better)',
+                                                font: {
+                                                    size: 14,
+                                                    weight: 'bold'
+                                                }
+                                            }
+                                        },
+                                        y: {
+                                            type: 'linear',
+                                            position: 'left',
+                                            min: 0,
+                                            max: 10,
+                                            grid: {
+                                                color: 'rgba(0, 0, 0, 0.1)'
+                                            },
+                                            title: {
+                                                display: true,
+                                                text: 'Effort & Change (Lower is Better)',
+                                                font: {
+                                                    size: 14,
+                                                    weight: 'bold'
+                                                }
+                                            }
+                                        }
+                                    },
+                                    plugins: {
+                                        tooltip: {
+                                            callbacks: {
+                                                label: function(context) {
+                                                    return context.raw.type;
+                                                }
+                                            }
+                                        },
+                                        legend: {
+                                            position: 'bottom',
+                                        }
+                                    }
+                                }
+                            });
+                
+            }
+
 
             function createPrinciplesChart() {
                 if (principlesChart) principlesChart.destroy();
