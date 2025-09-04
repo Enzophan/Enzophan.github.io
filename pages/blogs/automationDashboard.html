@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Automation Impact Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Cool Neutrals with Green and Blue Accents -->
+    <!-- Application Structure Plan: The SPA is designed as an interactive dashboard with a clear, card-based navigation system at the top. This allows users to non-linearly explore the key metrics from the report (Time, Coverage, Defects, etc.). Each metric is presented in its own dedicated section, which is shown or hidden via JavaScript. This thematic, modular structure was chosen to make the dense, data-heavy report highly scannable and digestible. It transforms a static document into an engaging, explorable experience where users can focus on the specific areas of impact that interest them most. -->
+    <!-- Visualization & Content Choices: 
+        - Report Info: Test Execution Time -> Goal: Compare -> Viz: Bar Chart -> Interaction: Hover to see data points -> Justification: A bar chart provides a powerful and immediate visual comparison of the stark difference between manual and automated execution times, making the "time saved" metric highly impactful. -> Library: Chart.js.
+        - Report Info: Test Coverage -> Goal: Compare/Proportions -> Viz: Doughnut Chart & Info Cards -> Interaction: Hover on chart segments -> Justification: A doughnut chart effectively visualizes the proportional increase in test cases, while accompanying cards with icons clearly present the qualitative benefits (more scenarios, more browsers). -> Library: Chart.js & Tailwind CSS.
+        - Report Info: Defect Detection -> Goal: Change/Compare -> Viz: Bar Chart & Dynamic Stat Cards -> Interaction: Hover on bars -> Justification: A bar chart clearly shows the reduction in defects reaching production. Animated stat cards provide a "wow factor" by highlighting the dramatic improvement in feedback loop time. -> Library: Chart.js & Vanilla JS.
+        - Report Info: Resource Utilization -> Goal: Compare -> Viz: Side-by-Side Cards with Icons -> Interaction: Static visual comparison -> Justification: This qualitative data is best presented in a clear, side-by-side format that contrasts the "before" and "after" states of the QA team's focus, emphasizing the shift to higher-value work. -> Library/Method: Tailwind CSS. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f4f8;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px;
+            max-height: 400px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 350px;
+            }
+        }
+        .nav-card {
+            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+        }
+        .nav-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        .nav-card.active {
+            border-color: #2563eb;
+            background-color: #eff6ff;
+        }
+        .fade-in {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="text-gray-800">
+
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
+        <header class="text-center mb-10">
+            <h1 class="text-4xl md:text-5xl font-bold text-gray-900 tracking-tight">Automation Impact Dashboard</h1>
+            <p class="mt-4 text-lg text-gray-600 max-w-3xl mx-auto">A comparative analysis of Automated vs. Manual testing, showcasing the return on investment of our automation initiative.</p>
+        </header>
+
+        <nav id="nav-menu" class="grid grid-cols-2 md:grid-cols-5 gap-4 mb-12">
+            <button data-target="time" class="nav-card text-center p-4 bg-white rounded-lg shadow-md border-2 border-transparent">
+                <div class="text-4xl mb-2">⏱️</div>
+                <h2 class="font-semibold">Time Savings</h2>
+            </button>
+            <button data-target="coverage" class="nav-card text-center p-4 bg-white rounded-lg shadow-md border-2 border-transparent">
+                <div class="text-4xl mb-2">🌐</div>
+                <h2 class="font-semibold">Test Coverage</h2>
+            </button>
+            <button data-target="defects" class="nav-card text-center p-4 bg-white rounded-lg shadow-md border-2 border-transparent">
+                <div class="text-4xl mb-2">🐛</div>
+                <h2 class="font-semibold">Defect Detection</h2>
+            </button>
+            <button data-target="resources" class="nav-card text-center p-4 bg-white rounded-lg shadow-md border-2 border-transparent">
+                <div class="text-4xl mb-2">👥</div>
+                <h2 class="font-semibold">Resource Use</h2>
+            </button>
+             <button data-target="reliability" class="nav-card text-center p-4 bg-white rounded-lg shadow-md border-2 border-transparent">
+                <div class="text-4xl mb-2">🎯</div>
+                <h2 class="font-semibold">Reliability</h2>
+            </button>
+        </nav>
+
+        <main id="main-content">
+            <!-- Time Savings Section -->
+            <section id="time" class="content-panel bg-white p-6 md:p-8 rounded-xl shadow-lg hidden">
+                <div class="text-center">
+                     <h2 class="text-3xl font-bold mb-2 text-gray-900">Drastic Reduction in Test Execution Time</h2>
+                     <p class="text-gray-600 max-w-3xl mx-auto mb-8">This metric shows the most immediate and dramatic impact of automation. By automating the full regression suite, we've transformed a multi-day effort into a process that runs in about an hour, enabling us to test with every single code change.</p>
+                </div>
+                <div class="grid md:grid-cols-2 gap-8 items-center">
+                    <div class="chart-container">
+                        <canvas id="timeChart"></canvas>
+                    </div>
+                    <div class="text-center">
+                        <div class="bg-blue-50 p-6 rounded-lg">
+                            <p class="text-lg text-blue-800">Time Saved per Full Regression</p>
+                            <p class="text-6xl font-bold text-blue-600 my-2">23 <span class="text-4xl">hours</span></p>
+                            <p class="text-2xl font-semibold text-green-600">A 95.8% Reduction</p>
+                        </div>
+                         <p class="mt-6 text-gray-500">This frees up our QA team to focus on new features and complex exploratory testing, rather than repetitive manual checks.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Coverage Section -->
+            <section id="coverage" class="content-panel bg-white p-6 md:p-8 rounded-xl shadow-lg hidden">
+                <div class="text-center">
+                     <h2 class="text-3xl font-bold mb-2 text-gray-900">Massive Expansion of Test Coverage</h2>
+                     <p class="text-gray-600 max-w-3xl mx-auto mb-8">Automation enables us to run more tests, more often, across more environments. This section visualizes the growth in both the quantity and the depth of our testing, leading to a more robust and reliable product.</p>
+                </div>
+                 <div class="grid md:grid-cols-2 gap-8 items-center">
+                    <div class="chart-container">
+                        <canvas id="coverageChart"></canvas>
+                    </div>
+                    <div class="space-y-4">
+                        <div class="flex items-center bg-gray-50 p-4 rounded-lg">
+                            <div class="text-3xl mr-4">📝</div>
+                            <div>
+                                <h3 class="font-semibold text-lg">200% Increase in Test Cases</h3>
+                                <p class="text-gray-600">From 250 manual tests to 750 automated tests, covering more functionality.</p>
+                            </div>
+                        </div>
+                         <div class="flex items-center bg-gray-50 p-4 rounded-lg">
+                            <div class="text-3xl mr-4">💡</div>
+                            <div>
+                                <h3 class="font-semibold text-lg">Expanded Scenario Testing</h3>
+                                <p class="text-gray-600">Now includes edge cases and data-driven scenarios that were previously too time-consuming.</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center bg-gray-50 p-4 rounded-lg">
+                            <div class="text-3xl mr-4">💻</div>
+                            <div>
+                                <h3 class="font-semibold text-lg">Broader Browser Compatibility</h3>
+                                <p class="text-gray-600">Tests now run automatically across 5 modern browsers, up from 3 manual checks.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Defects Section -->
+            <section id="defects" class="content-panel bg-white p-6 md:p-8 rounded-xl shadow-lg hidden">
+                <div class="text-center">
+                     <h2 class="text-3xl font-bold mb-2 text-gray-900">"Shift Left": Finding Defects Faster</h2>
+                     <p class="text-gray-600 max-w-3xl mx-auto mb-8">The core benefit of integrating automation into our CI/CD pipeline is the rapid feedback loop. We now find defects minutes after code is committed, not days later during a manual regression cycle. This makes bugs cheaper and easier to fix.</p>
+                </div>
+                 <div class="grid md:grid-cols-3 gap-6 text-center mb-8">
+                     <div class="bg-green-50 p-6 rounded-lg">
+                        <p class="text-lg text-green-800">Feedback Loop Speed</p>
+                        <p class="text-5xl font-bold text-green-600 my-2">97% <span class="text-3xl">Faster</span></p>
+                        <p class="text-gray-600">From 8 hours to just 15 minutes</p>
+                    </div>
+                    <div class="bg-green-50 p-6 rounded-lg">
+                        <p class="text-lg text-green-800">Regression Defects Found</p>
+                        <p class="text-5xl font-bold text-green-600 my-2">90% <span class="text-3xl">Reduction</span></p>
+                         <p class="text-gray-600">Far fewer major bugs per release</p>
+                    </div>
+                     <div class="bg-green-50 p-6 rounded-lg">
+                        <p class="text-lg text-green-800">Defects in Production</p>
+                        <p class="text-5xl font-bold text-green-600 my-2">80% <span class="text-3xl">Reduction</span></p>
+                         <p class="text-gray-600">Dramatically improved user experience</p>
+                    </div>
+                 </div>
+                 <div class="chart-container">
+                    <canvas id="defectsChart"></canvas>
+                </div>
+            </section>
+
+            <!-- Resources Section -->
+            <section id="resources" class="content-panel bg-white p-6 md:p-8 rounded-xl shadow-lg hidden">
+                <div class="text-center">
+                     <h2 class="text-3xl font-bold mb-2 text-gray-900">Smarter Resource Utilization</h2>
+                     <p class="text-gray-600 max-w-3xl mx-auto mb-8">Automation doesn't replace testers; it empowers them. By offloading repetitive regression tasks, our QA team can now focus on high-impact activities that require human creativity and critical thinking, ultimately leading to a higher quality product.</p>
+                </div>
+                <div class="grid md:grid-cols-2 gap-8">
+                    <div class="border-2 border-red-200 p-6 rounded-lg">
+                        <h3 class="text-2xl font-semibold text-red-600 mb-4 text-center">Before Automation</h3>
+                        <ul class="space-y-3">
+                            <li class="flex items-start">
+                                <span class="text-red-500 mr-3 mt-1">🔻</span>
+                                <div><strong class="font-semibold">Primary Focus:</strong> Repetitive regression checks.</div>
+                            </li>
+                             <li class="flex items-start">
+                                <span class="text-red-500 mr-3 mt-1">🔻</span>
+                                <div><strong class="font-semibold">Human Effort:</strong> 24+ person-hours per regression cycle.</div>
+                            </li>
+                             <li class="flex items-start">
+                                <span class="text-red-500 mr-3 mt-1">🔻</span>
+                                <div><strong class="font-semibold">New Feature Testing:</strong> Limited time, rushed process.</div>
+                            </li>
+                             <li class="flex items-start">
+                                <span class="text-red-500 mr-3 mt-1">🔻</span>
+                                <div><strong class="font-semibold">Team Morale:</strong> Monotonous, repetitive work led to burnout.</div>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="border-2 border-green-200 bg-green-50 p-6 rounded-lg">
+                         <h3 class="text-2xl font-semibold text-green-700 mb-4 text-center">After Automation</h3>
+                         <ul class="space-y-3">
+                            <li class="flex items-start">
+                                <span class="text-green-500 mr-3 mt-1">🔼</span>
+                                <div><strong class="font-semibold">Primary Focus:</strong> Exploratory testing & new features.</div>
+                            </li>
+                             <li class="flex items-start">
+                                <span class="text-green-500 mr-3 mt-1">🔼</span>
+                                <div><strong class="font-semibold">Human Effort:</strong> 1 hour of setup, then unsupervised execution.</div>
+                            </li>
+                             <li class="flex items-start">
+                                <span class="text-green-500 mr-3 mt-1">🔼</span>
+                                <div><strong class="font-semibold">New Feature Testing:</strong> In-depth validation during the sprint.</div>
+                            </li>
+                             <li class="flex items-start">
+                                <span class="text-green-500 mr-3 mt-1">🔼</span>
+                                <div><strong class="font-semibold">Team Morale:</strong> Engaged in creative, high-value problem-solving.</div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Reliability Section -->
+            <section id="reliability" class="content-panel bg-white p-6 md:p-8 rounded-xl shadow-lg hidden">
+                <div class="text-center">
+                     <h2 class="text-3xl font-bold mb-2 text-gray-900">Unwavering Consistency and Reliability</h2>
+                     <p class="text-gray-600 max-w-3xl mx-auto mb-8">Automated tests eliminate the risk of human error inherent in manual checking. They perform the exact same steps in the exact same way, every single time, providing a trustworthy and objective quality gate for every build.</p>
+                </div>
+                <div class="grid md:grid-cols-2 gap-8">
+                     <div class="bg-red-50 p-6 rounded-lg">
+                        <h3 class="text-2xl font-semibold text-red-600 mb-4 text-center">Manual Testing Risks</h3>
+                        <ul class="list-disc list-inside space-y-2 text-gray-700">
+                           <li>Susceptible to human error and missed steps.</li>
+                           <li>Execution can vary between different testers.</li>
+                           <li>Results can be subjective.</li>
+                           <li>Difficult to perform consistently under pressure.</li>
+                        </ul>
+                    </div>
+                    <div class="bg-green-50 p-6 rounded-lg">
+                         <h3 class="text-2xl font-semibold text-green-700 mb-4 text-center">Automation Guarantees</h3>
+                          <ul class="list-disc list-inside space-y-2 text-gray-700">
+                           <li>Executes tests precisely as programmed, every time.</li>
+                           <li>Provides 100% repeatable and consistent results.</li>
+                           <li>Offers objective, data-driven pass/fail outcomes.</li>
+                           <li>Acts as a reliable, automated quality gate.</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const navButtons = document.querySelectorAll('.nav-card');
+            const contentPanels = document.querySelectorAll('.content-panel');
+            let activeChart = null;
+
+            function showPanel(targetId) {
+                if (activeChart && typeof activeChart.destroy === 'function') {
+                    activeChart.destroy();
+                    activeChart = null;
+                }
+
+                navButtons.forEach(btn => {
+                    btn.classList.toggle('active', btn.dataset.target === targetId);
+                });
+
+                contentPanels.forEach(panel => {
+                    if (panel.id === targetId) {
+                        panel.classList.remove('hidden');
+                        panel.classList.add('fade-in');
+                        renderChart(targetId);
+                    } else {
+                        panel.classList.add('hidden');
+                    }
+                });
+            }
+
+            function renderChart(id) {
+                switch (id) {
+                    case 'time':
+                        createTimeChart();
+                        break;
+                    case 'coverage':
+                        createCoverageChart();
+                        break;
+                    case 'defects':
+                        createDefectsChart();
+                        break;
+                }
+            }
+
+            navButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    showPanel(button.dataset.target);
+                });
+            });
+
+            function createTimeChart() {
+                const ctx = document.getElementById('timeChart').getContext('2d');
+                activeChart = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['Full Regression Suite Execution'],
+                        datasets: [
+                            {
+                                label: 'Manual Testing (Hours)',
+                                data: [24],
+                                backgroundColor: '#fca5a5',
+                                borderColor: '#ef4444',
+                                borderWidth: 1
+                            },
+                            {
+                                label: 'Automated Testing (Hours)',
+                                data: [1],
+                                backgroundColor: '#60a5fa',
+                                borderColor: '#2563eb',
+                                borderWidth: 1
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true, maintainAspectRatio: false,
+                        scales: { y: { beginAtZero: true, title: { display: true, text: 'Hours' } } },
+                        plugins: { legend: { position: 'bottom' } }
+                    }
+                });
+            }
+
+            function createCoverageChart() {
+                const ctx = document.getElementById('coverageChart').getContext('2d');
+                activeChart = new Chart(ctx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Manual Test Cases', 'Additional Automated Cases'],
+                        datasets: [{
+                            data: [250, 500],
+                            backgroundColor: ['#fca5a5', '#6ee7b7'],
+                            borderColor: '#ffffff',
+                            borderWidth: 4
+                        }]
+                    },
+                    options: {
+                        responsive: true, maintainAspectRatio: false,
+                        plugins: { legend: { position: 'bottom' },
+                        tooltip: { callbacks: { label: (c) => `${c.label}: ${c.raw} cases` } } }
+                    }
+                });
+            }
+            
+            function createDefectsChart() {
+                const ctx = document.getElementById('defectsChart').getContext('2d');
+                activeChart = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['Major Regression Defects', 'Production Defects'],
+                        datasets: [
+                            {
+                                label: 'Manual (Avg. per month)',
+                                data: [8, 2.5],
+                                backgroundColor: '#fca5a5',
+                                borderColor: '#ef4444',
+                                borderWidth: 1
+                            },
+                             {
+                                label: 'Automated (Avg. per month)',
+                                data: [1, 0.5],
+                                backgroundColor: '#6ee7b7',
+                                borderColor: '#059669',
+                                borderWidth: 1
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true, maintainAspectRatio: false,
+                        scales: { y: { beginAtZero: true, title: { display: true, text: 'Average Defects Found' } } },
+                        plugins: { legend: { position: 'bottom' }, title: { display: true, text: 'Average Defects Found Per Month' } }
+                    }
+                });
+            }
+
+            // Show the first panel by default
+            showPanel('time');
+        });
+    </script>
+</body>
+</html>
