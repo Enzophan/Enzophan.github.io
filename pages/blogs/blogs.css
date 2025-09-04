@@ -190,11 +190,21 @@ h1, h2, h3 {
     text-align: center;
 }
 
+
+.blog-post-container {
+    max-width: 800px;
+    margin: 0 auto;
+/*     background-color: #ffffff;
+    padding: 30px; */
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
 /* --- Menu List Styles --- */
 .menu-list {
     margin: 40px 0;
     padding: 20px;
-    background-color: #e8f5e9; /* Light green background */
+/*     background-color: #e8f5e9; /* Light green background */ */
     border: 1px solid #c8e6c9;
     border-radius: 8px;
 }
